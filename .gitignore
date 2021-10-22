@@ -1,3 +1,3 @@
-./wordcount/gob
-./wordcount/result.txt
-./wordcount/.idea
+wordcount/gob/
+wordcount/result.txt
+wordcount/.idea

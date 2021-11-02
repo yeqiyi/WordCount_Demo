@@ -17,3 +17,9 @@ this simple system consists of one Contractor and three Workers，Contractor use
 
 The result will be saved in ```result.txt```
 
+## Updated 11.2
+
+Add fault-tolerant mechanism, now if shut down anyone of workers and just keep at least one worker alive, it can still work and output correct result.
+
+And there are some changes in startup sequence,now you should run Contractor first.
+

@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"sync"
+	"time"
 	"wordcount/FileReader"
 )
 
@@ -45,26 +46,27 @@ func (c *Ctor)RegistWorkers(){
 }
 
 func (c *Ctor)callWorker(addr string){
+	str:=<-task_str
 	defer wg.Done()
 	defer func(){
 		if err:=recover();err!=nil{
-			fmt.Println(err)
+			task_str<-str
+			log.Println(err)
 		}
 	}()
 	ctorcall,err:=rpc.Dial("tcp",":"+addr)
 	if err!=nil{
-		log.Println(err)
+		//task_str<-str
+		panic(err)
 		//fmt.Printf("Worker %s shut down\n",addr)
-		//panic(err)
 	}
 
 	reply:=make(map[string]int)
 	fmt.Printf("worker(%s) is counting...\n",addr)
-	str:=<-task_str
 	err=ctorcall.Call("Worker.DoTask",str,&reply)
 	if err!=nil{
-		task_str<-str
-		//panic(err)
+		//task_str<-str
+		panic(err)
 		//fmt.Println(err)
 	}
 
@@ -108,10 +110,10 @@ func main(){
 		fmt.Println(err)
 		return
 	}
-
+	start:=time.Now()
 	for w:=range(conns){
-		//任务完成 退出
 		fmt.Println("task_str len:",len(task_str))
+		//任务完成 退出
 		if len(task_str)==0{
 			break
 		}
@@ -128,7 +130,7 @@ func main(){
 	}
 	 */
 	wg.Wait()
-
+	duration:=time.Since(start)
 	file,err:=os.Create("result.txt")
 	defer file.Close()
 	for k,v :=range(res){
@@ -136,4 +138,5 @@ func main(){
 		io.WriteString(file,str)
 		fmt.Printf("key:%s value:%d\n",k,v)
 	}
+	fmt.Printf("执行时间：%v\n",duration.Seconds())
 }

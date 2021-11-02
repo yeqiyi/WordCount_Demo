@@ -28,7 +28,7 @@ func (w *Worker)DoTask(request string,reply *map[string]int) error{
 	str_slice:=strings.Fields(request)
 	for i:=0;i<len(str_slice);i++{
 		if v,ok:=mp[str_slice[i]];ok{
-			time.Sleep(1000*time.Millisecond)
+			time.Sleep(500*time.Millisecond)
 			mp[str_slice[i]]=v+1
 		}else{
 			mp[str_slice[i]]=1
